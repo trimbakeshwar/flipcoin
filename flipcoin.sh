@@ -2,7 +2,7 @@
 #!/bin/bash -x
 echo "welcome to flipcoin"
 
-#toss the singlet doublet triplet coin 
+#toss the for singlet ,doublet ,triplet  
 
 declare -A coin
 declare -A percentageFlip
@@ -23,13 +23,19 @@ function flip_coin(){
 			esac
 		done
 		coin[$sideOfCoin]=$((${coin[$sideOfCoin]}+1))
+		if [[ $max -lt ${coin[$sideOfCoin]} ]]
+		then
+			max=${coin[$sideOfCoin]}
+			maxKey=$sideOfCoin
+		fi
 		percentage $sideOfCoin
 	done
-		echo "${!coin[@]} ${coin[@]}"
+	echo "${!coin[@]} ${coin[@]} max count is $max present on $maxKey"
 }
 
 echo ${coin[@]}
 #calculate parcentage and store in dictionary
+
 function percentage(){
 	percentage=$((${coin[$sideOfCoin]}*100/$noOfFlip))
 	percentageFlip[$sideOfCoin]=$percentage
@@ -45,7 +51,7 @@ do
 	if [ $noOfCoin -gt 0 ] && [ $noOfCoin -lt 4 ]
 	then
 		result="$( flip_coin $(($noOfFlip,$noOfCoin)) )"
-		#echo $result
+		echo $result
 		echo ${coin[@]}
 	else
 		echo "enter valid number of coin" 
@@ -53,6 +59,6 @@ do
 	read -p "do u want quit press 1" quit
 	if [ $quit -eq 1 ]
 	then
-		break
+		break;
 	fi
 done
