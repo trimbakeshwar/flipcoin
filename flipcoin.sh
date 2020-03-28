@@ -4,38 +4,43 @@ echo "welcome to flipcoin"
 
 #toss the coin 
 
-function tossTheCoin(){
-toss=$((RANDOM%2))
-case $toss in 
-0)
-   echo 0 ;;
-1)
-   echo 1 ;;
-esac
-}
-count=0
-while true
+declare -A coin
+declare -A percentageFlip
+HEAD=1
+TAIL=0
+function flip_coin(){
+for (( j=1; j<=$noOfFlip; j++ ))
 do
-	read -p "enter 0 For fliping coin 1 For Exit" choice
-	if [ $choice -eq 0 ]
-	then
-		result="$( flip_coin $(()) )"
-		((count++))
-		if [ $result -eq 1 ]
-		then
-			singlet[head]=$((${singlet[head]}+1))
-		elif [ $result -eq 0 ]
-		then
-			singlet[tail]=$((${singlet[tail]}+1))
-		fi
-	elif [ $choice -eq 1 ]
-	then
-		break
-	fi
+	sideOfCoin=""
+	for (( i=1; i<=$noOfCoin; i++ ))
+	do
+		toss=$((RANDOM%2))
+		case $toss in 
+		$TAIL)
+  			sideOfCoin+=T ;;
+		$HEAD)
+			sideOfCoin+=H ;;
+		esac
+	done
+ count_And_Store_Result $sideOfCoin
 done
-echo "${!singlet[@]}	${singlet[@]} "
-percentageHead=`echo "${singlet[head]}*100/$count" | bc -l` 
-echo " percentage head  $percentageHead"
-percentageTail=`echo "${singlet[tail]}*100/$count" | bc -l` 
-echo "percentage tail $percentageTail"
+
+}
+function count_And_Store_Result(){
+	coin[$sideOfCoin]=$((${coin[$sideOfCoin]}+1))
+	percentage $sideOfCoin
+	echo " ${!coin[@]}  ${coin[@]}"
+}
+function percentage(){
+	percentage=$((${coin[$sideOfCoin]}*100/$noOfFlip))
+	percentageFlip[$sideOfCoin]=$percentage
+	echo "keys ${!percentageFlip[@]}"
+	echo  "percent ${percentageFlip[@]}"
+
+}
+
+
+read -p "enter no of flip" noOfFlip
+read -p "enter no of coin" noOfCoin
+"$( flip_coin $(($noOfFlip,$noOfCoin)) )"
 
